@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         TF_REPO_URL = "https://github.com/ebenhamu/Monithor-infrastructure.git"
-        TF_REPO_DIR = "~/jobs/MoniThorDeployment/workspace/Monithor-infrastructure"
+        TF_REPO_DIR = "${WORKSPACE}/Monithor-infrastructure"  // Workspace for the repository
         TF_BRANCH = "1.0.0"  // Specify the branch
         GITHUB_CREDENTIALS = credentials('monithor_git_token') // Replace with your credential ID
         TF_VERSION = "1.5.2" // Specify the Terraform version to install
@@ -29,11 +29,23 @@ pipeline {
 
                     for (file in changedFiles) {
                         echo "File: ${file}"
+                        if (file.endsWith('manifest.json')) {
+                            def jsonContent = readJSON file: "${WORKSPACE}/${file}" // Read the manifest.json
+                            if (jsonContent.control_plane?.count) {
+                                controlPlaneCount = jsonContent.control_plane.count
+                            }
+                            if (jsonContent.worker_nodes?.count) {
+                                workerNodeCount = jsonContent.worker_nodes.count
+                            }
+                        }
                     }
 
-                    // Set counts to environment variables (use them dynamically later)
+                    // Set counts to environment variables
                     env.CONTROL_PLANE_COUNT = controlPlaneCount.toString()
                     env.WORKER_NODE_COUNT = workerNodeCount.toString()
+
+                    echo "Control Plane Count: ${controlPlaneCount}"
+                    echo "Worker Node Count: ${workerNodeCount}"
                 }
             }
         }
@@ -72,22 +84,20 @@ pipeline {
             }
         }
 
-
-        stages {
-                stage('Install Terraform') {
-                    steps {
-                        script {
-                            echo "Installing Terraform version ${TF_VERSION}..."
-                            sh """
-                                curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-                                unzip terraform.zip
-                                mv terraform /usr/local/bin/
-                                rm terraform.zip
-                                terraform -version
-                            """
-                        }
-                    }
+        stage('Install Terraform') {
+            steps {
+                script {
+                    echo "Installing Terraform version ${TF_VERSION}..."
+                    sh """
+                        curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+                        unzip terraform.zip
+                        mv terraform /usr/local/bin/
+                        rm terraform.zip
+                        terraform -version
+                    """
                 }
+            }
+        }
 
         stage('Run Terraform Commands') {
             steps {
