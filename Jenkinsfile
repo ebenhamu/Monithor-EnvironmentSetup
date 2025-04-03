@@ -11,6 +11,22 @@ List<String> getChangedFilesList() {
     return changedFiles
 }
 
+@NonCPS
+List<String> getChangedFilesList1() {
+    def changedFiles = []
+    for (changeLogSet in currentBuild.changeSets) {
+        for (entry in changeLogSet.getItems()) { // Iterate through commits
+            for (file in entry.getAffectedFiles()) { // Get affected files
+                def fileName = file.getPath().tokenize('/').last() // Extract file name
+                echo "file ${filename}"
+                changedFiles.add(fileName) // Add only the file name to the list
+            }
+        }
+    }
+    return changedFiles
+}
+
+
 pipeline {
     agent any
 
@@ -36,6 +52,7 @@ pipeline {
         stage('Extract Node Counts') {
             steps {
                 script {
+                    def changedFiles1 = getChangedFilesList1()
                     def changedFiles = getChangedFilesList()
                     def controlPlaneCount = 0
                     def workerNodeCount = 0
