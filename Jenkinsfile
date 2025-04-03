@@ -44,12 +44,9 @@ pipeline {
                     for (file in changedFiles) {
                         echo "file ${file}"                        
                     }
-                    
-                    for (file in changedFiles) {         
-                        def fileName = file.getPath().tokenize('/').last() // Extract file name
-                        echo "file ${fileName}" // Correct variable name                        
-               
-                        if (file.endsWith('.json')) {
+
+                    for (file in changedFiles) {                     
+                        if (file.endsWith('manifest.json')) {
                             echo "Processing JSON file: ${file}"                            
                             // try {
                             //     def jsonContent = readJSON file: file

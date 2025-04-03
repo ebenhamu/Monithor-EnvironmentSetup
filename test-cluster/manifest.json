@@ -6,6 +6,6 @@
     },
            "worker_nodes": {
             "instance_type": "t3.medium",
-            "count": 4
+            "count": 6
     }
 }
