@@ -1,18 +1,3 @@
-@NonCPS
-List<String> getChangedFilesList() {
-    def changedFiles = []
-    for (changeLogSet in currentBuild.changeSets) {
-        for (entry in changeLogSet.getItems()) { // for each commit in the detected changes
-            for (file in entry.getAffectedFiles()) {
-                changedFiles.add(file.getPath()) // add changed file to list
-            }
-        }
-    }
-    return changedFiles
-}
-
-
-
 pipeline {
     agent any
 
@@ -30,60 +15,27 @@ pipeline {
                     def changedFiles = getChangedFilesList()
                     def filesOutput = changedFiles.join('\n')
                     echo "Changed Files:\n${filesOutput}"
-                    
                 }
             }
         }
 
         stage('Extract Node Counts') {
             steps {
-                script {                    
+                script {
                     def changedFiles = getChangedFilesList()
                     def controlPlaneCount = 0
                     def workerNodeCount = 0
+
                     for (file in changedFiles) {
-                        echo "file ${file}"                        
+                        echo "File: ${file}"
                     }
 
-                    for (file in changedFiles) {                     
-                        if (file.endsWith('manifest.json')) {
-                            echo "Processing JSON file: ${file}"                            
-                            // try {
-                            //     def jsonContent = readJSON file: file
-                            //     if (jsonContent.control_plane?.count) {
-                            //         controlPlaneCount = jsonContent.control_plane.count
-                            //     }
-                            //     if (jsonContent.worker_nodes?.count) {
-                            //         workerNodeCount = jsonContent.worker_nodes.count
-                            //     }
-                            //     } catch (Exception e) {
-                            //         echo "Failed to process JSON file: ${file}"
-                            //         echo "Error: ${e.message}"
-                            //     }
-                        // def jsonContent = readJSON file : "${file}"
-                            // if (jsonContent.control_plane) {
-                            //     controlPlaneCount = jsonContent.control_plane.count
-                            // }
-                            // if (jsonContent.worker_nodes) {
-                            //     workerNodeCount = jsonContent.worker_nodes.count
-                            // }
-                        }
-                    }
-
-                    echo "Control Plane Count: ${controlPlaneCount}"
-                    echo "Worker Node Count: ${workerNodeCount}"
-
-                    // Save the counts as environment variables for later stages
+                    // Set counts to environment variables (use them dynamically later)
                     env.CONTROL_PLANE_COUNT = controlPlaneCount.toString()
                     env.WORKER_NODE_COUNT = workerNodeCount.toString()
                 }
             }
         }
-
- 
-
-
-
 
         stage('Clone Terraform Repo') {
             steps {
@@ -97,6 +49,27 @@ pipeline {
             }
         }
 
+        stage('Copy Manifest File to Terraform Folder') {
+            steps {
+                script {
+                    def changedFiles = getChangedFilesList()
+                    def destinationDir = "${TF_REPO_DIR}/tf"
+
+                    // Ensure target folder exists
+                    sh "mkdir -p ${destinationDir}"
+
+                    // Process changed files and copy manifest.json
+                    for (file in changedFiles) {
+                        if (file.endsWith('manifest.json')) {
+                            echo "Copying JSON file: ${file}"
+                            sh """
+                                cp ${WORKSPACE}/${file} ${destinationDir}
+                            """
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Update Terraform Config') {
             steps {
@@ -123,4 +96,17 @@ pipeline {
             }
         }
     }
+}
+
+@NonCPS
+List<String> getChangedFilesList() {
+    def changedFiles = []
+    for (changeLogSet in currentBuild.changeSets) {
+        for (entry in changeLogSet.getItems()) {
+            for (file in entry.getAffectedFiles()) {
+                changedFiles.add(file.getPath())
+            }
+        }
+    }
+    return changedFiles
 }
