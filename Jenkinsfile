@@ -51,7 +51,7 @@ pipeline {
                     sh """
                         curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
                         unzip terraform.zip
-                        mv terraform /usr/local/bin/
+                        sudo mv terraform /usr/local/bin/
                         rm terraform.zip
                         terraform -version
                     """
