@@ -6,6 +6,7 @@ pipeline {
         TF_REPO_DIR = "~/jobs/MoniThorDeployment/workspace/Monithor-infrastructure"
         TF_BRANCH = "1.0.0"  // Specify the branch
         GITHUB_CREDENTIALS = credentials('monithor_git_token') // Replace with your credential ID
+        TF_VERSION = "1.5.2" // Specify the Terraform version to install
     }
 
     stages {
@@ -67,6 +68,38 @@ pipeline {
                             """
                         }
                     }
+                }
+            }
+        }
+
+
+        stages {
+                stage('Install Terraform') {
+                    steps {
+                        script {
+                            echo "Installing Terraform version ${TF_VERSION}..."
+                            sh """
+                                curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+                                unzip terraform.zip
+                                mv terraform /usr/local/bin/
+                                rm terraform.zip
+                                terraform -version
+                            """
+                        }
+                    }
+                }
+
+        stage('Run Terraform Commands') {
+            steps {
+                script {
+                    echo "Running Terraform commands in ${TF_REPO_DIR}/tf..."
+                    
+                    sh """
+                        cd ${TF_REPO_DIR}/tf
+                        terraform init -input=false  # Initialize the Terraform directory
+                        terraform plan -out=tfplan   # Generate the plan and output it as tfplan
+                        terraform apply -input=false -auto-approve tfplan  # Apply the plan
+                    """
                 }
             }
         }
