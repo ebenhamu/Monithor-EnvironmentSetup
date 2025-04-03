@@ -40,12 +40,10 @@ pipeline {
                     def controlPlaneCount = 0
                     def workerNodeCount = 0
                     for (file in changedFiles) {
-                        echo "file ${file}"
-                        echo" ${file.getPath().tokenize('/').last()}"
+                        echo "file ${file}"                        
                     }
-                    for (file in changedFiles) {
-                        echo "file only ${file.getPath().tokenize('/').last()}"
-                        if (file.getPath().tokenize('/').last() == 'manifest.json') {
+                    for (file in changedFiles) {                        
+                        if (file.endsWith('.json')) {
                             echo "Processing JSON file: ${file}"                            
                             // try {
                             //     def jsonContent = readJSON file: file
