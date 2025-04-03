@@ -6,6 +6,6 @@
     },
            "worker_nodes": {
             "instance_type": "t3.micro",
-            "count": 4
+            "count": 3
     }
 }
