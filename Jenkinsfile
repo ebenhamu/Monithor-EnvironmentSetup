@@ -16,7 +16,7 @@ pipeline {
 
     environment {
         TF_REPO_URL = "https://github.com/ebenhamu/Monithor-infrastructure.git"
-        TF_REPO_DIR = "~/jobs/MoniThorDeployment/workspace/terraform"
+        TF_REPO_DIR = "~/jobs/MoniThorDeployment/workspace/Monithor-infrastructure"
         TF_BRANCH = "1.0.0"  // Specify the branch
         GITHUB_CREDENTIALS = credentials('monithor_git_token') // Replace with your credential ID
     }
