@@ -74,28 +74,22 @@ pipeline {
             }
         }
 
-
-
-        // stage('Clean Workspace') {
-        //     steps {
-        //         script {
-        //             cleanWs()
-        //                 echo "Workspace cleaned."
-        //                 sh '''
-        //                 sudo docker rm -f $(sudo docker ps -a -q) || true
-        //                 '''
-        //         }
-        //                 echo "Docker containers removed."
-        //     }
-        // }
-
-
-
  
 
 
 
 
+        stage('Clone Terraform Repo') {
+            steps {
+                script {
+                    echo "Cloning Terraform repository (branch ${env.TF_BRANCH})..."
+                    sh """
+                        rm -rf ${TF_REPO_DIR}
+                        git clone --branch ${TF_BRANCH} https://${env.GITHUB_CREDENTIALS_USR}:${env.GITHUB_CREDENTIALS_PSW}@github.com/ebenhamu/Monithor-infrastructure.git ${TF_REPO_DIR}
+                    """
+                }
+            }
+        }
 
 
         stage('Update Terraform Config') {
