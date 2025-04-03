@@ -28,6 +28,7 @@ pipeline {
                     def changedFiles = getChangedFilesList()
                     def filesOutput = changedFiles.join('\n')
                     echo "Changed Files:\n${filesOutput}"
+                    echo "file only ${file.getPath().tokenize('/').last()}"
                 }
             }
         }
