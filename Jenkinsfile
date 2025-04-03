@@ -28,7 +28,7 @@ pipeline {
                     def changedFiles = getChangedFilesList()
                     def filesOutput = changedFiles.join('\n')
                     echo "Changed Files:\n${filesOutput}"
-                    echo "file only ${file.getPath().tokenize('/').last()}"
+                    
                 }
             }
         }
@@ -41,6 +41,7 @@ pipeline {
                     def workerNodeCount = 0
 
                     for (file in changedFiles) {
+                        echo "file only ${file.getPath().tokenize('/').last()}"
                         if (file.getPath().tokenize('/').last() == 'manifest.json') {
                             echo "Processing JSON file: ${file}"                            
                             // try {
