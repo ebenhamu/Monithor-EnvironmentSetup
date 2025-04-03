@@ -61,46 +61,34 @@ pipeline {
             }
         }
 
-        stage('Run Terraform Commands') {
+          
+    
+    
+        stage('Terraform Init Plan Apply ') {
             steps {
-                script {
-                    echo "Running Terraform commands in ${TF_REPO_DIR}/tf..."
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials']]) {
                     
                     sh """
-                        cd ${TF_REPO_DIR}/tf
-                        export PATH=/var/jenkins_home/jobs/MoniThorDeployment/workspace/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-                        terraform init -input=false  # Initialize the Terraform directory
-                        terraform plan -out=tfplan   # Generate the plan and output it as tfplan
-                        terraform apply -input=false -auto-approve tfplan  # Apply the plan
-                    """
-                }
-            }
-        }
 
-        stage('Update Terraform Config') {
-            steps {
-                script {
-                    echo "Updating Terraform node counts..."
-                    sh """
-                        sed -i 's/count         = [0-9]*/count         = ${env.CONTROL_PLANE_COUNT}/' ${TF_REPO_DIR}/terraform/main.tf
-                        sed -i 's/count         = [0-9]*/count         = ${env.WORKER_NODE_COUNT}/' ${TF_REPO_DIR}/terraform/main.tf
+                    echo "Running Terraform commands in ${TF_REPO_DIR}/tf..."
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    cd ${TF_REPO_DIR}/tf
+                    export PATH=/var/jenkins_home/jobs/MoniThorDeployment/workspace/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+                    terraform init -input=false  # Initialize the Terraform directory
+                    terraform plan -out=tfplan   # Generate the plan and output it as tfplan
+                    terraform apply -input=false -auto-approve tfplan  # Apply the plan
+                    
+   
                     """
                 }
             }
         }
+    
+}
 
-        stage('Update Terraform Config 1') {
-            steps {
-                script {
-                    echo "Updating Terraform configuration with node counts..."
-                    sh """
-                        cd ${TF_REPO_DIR}
-                        echo 'control_plane_count = ${env.CONTROL_PLANE_COUNT}' > terraform.tfvars
-                        echo 'worker_node_count = ${env.WORKER_NODE_COUNT}' >> terraform.tfvars
-                    """
-                }
-            }
-        }
+
+
     }
 }
 
