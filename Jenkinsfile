@@ -9,47 +9,7 @@ pipeline {
         TF_VERSION = "1.5.2" // Specify the Terraform version to install
     }
 
-    // stages {
-    //     stage('Check Changed Files') {
-    //         steps {
-    //             script {
-    //                 def changedFiles = getChangedFilesList()
-    //                 def filesOutput = changedFiles.join('\n')
-    //                 echo "Changed Files:\n${filesOutput}"
-    //             }
-    //         }
-    //     }
-
-        // stage('Extract Node Counts') {
-        //     steps {
-        //         script {
-        //             def changedFiles = getChangedFilesList()
-        //             def controlPlaneCount = 0
-        //             def workerNodeCount = 0
-
-        //             for (file in changedFiles) {
-        //                 echo "File: ${file}"
-        //                 if (file.endsWith('manifest.json')) {
-        //                     def jsonContent = readJSON file: "${WORKSPACE}/${file}" // Read the manifest.json
-        //                     if (jsonContent.control_plane?.count) {
-        //                         controlPlaneCount = jsonContent.control_plane.count
-        //                     }
-        //                     if (jsonContent.worker_nodes?.count) {
-        //                         workerNodeCount = jsonContent.worker_nodes.count
-        //                     }
-        //                 }
-        //             }
-
-        //             // Set counts to environment variables
-        //             env.CONTROL_PLANE_COUNT = controlPlaneCount.toString()
-        //             env.WORKER_NODE_COUNT = workerNodeCount.toString()
-
-        //             echo "Control Plane Count: ${controlPlaneCount}"
-        //             echo "Worker Node Count: ${workerNodeCount}"
-        //         }
-        //     }
-        // }
-
+    stages {
         stage('Clone Terraform Repo') {
             steps {
                 script {
