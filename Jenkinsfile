@@ -41,6 +41,7 @@ pipeline {
                     def workerNodeCount = 0
                     for (file in changedFiles) {
                         echo "file ${file}"
+                        echo" ${file.getPath().tokenize('/').last()}"
                     }
                     for (file in changedFiles) {
                         echo "file only ${file.getPath().tokenize('/').last()}"
