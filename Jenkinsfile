@@ -76,18 +76,18 @@ pipeline {
 
 
 
-        stage('Clean Workspace') {
-            steps {
-                script {
-                    cleanWs()
-                        echo "Workspace cleaned."
-                        sh '''
-                        sudo docker rm -f $(sudo docker ps -a -q) || true
-                        '''
-                }
-                        echo "Docker containers removed."
-            }
-        }
+        // stage('Clean Workspace') {
+        //     steps {
+        //         script {
+        //             cleanWs()
+        //                 echo "Workspace cleaned."
+        //                 sh '''
+        //                 sudo docker rm -f $(sudo docker ps -a -q) || true
+        //                 '''
+        //         }
+        //                 echo "Docker containers removed."
+        //     }
+        // }
 
 
 
