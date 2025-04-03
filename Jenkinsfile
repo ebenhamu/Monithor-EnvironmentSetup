@@ -39,7 +39,9 @@ pipeline {
                     def changedFiles = getChangedFilesList()
                     def controlPlaneCount = 0
                     def workerNodeCount = 0
-
+                    for (file in changedFiles) {
+                        echo "file ${file}"
+                    }
                     for (file in changedFiles) {
                         echo "file only ${file.getPath().tokenize('/').last()}"
                         if (file.getPath().tokenize('/').last() == 'manifest.json') {
