@@ -42,18 +42,18 @@ pipeline {
                     for (file in changedFiles) {
                         if (file.endsWith('.json')) {
                             echo "Processing JSON file: ${file}"                            
-                            try {
-                                def jsonContent = readJSON file: file
-                                if (jsonContent.control_plane?.count) {
-                                    controlPlaneCount = jsonContent.control_plane.count
-                                }
-                                if (jsonContent.worker_nodes?.count) {
-                                    workerNodeCount = jsonContent.worker_nodes.count
-                                }
-                                } catch (Exception e) {
-                                    echo "Failed to process JSON file: ${file}"
-                                    echo "Error: ${e.message}"
-                                }
+                            // try {
+                            //     def jsonContent = readJSON file: file
+                            //     if (jsonContent.control_plane?.count) {
+                            //         controlPlaneCount = jsonContent.control_plane.count
+                            //     }
+                            //     if (jsonContent.worker_nodes?.count) {
+                            //         workerNodeCount = jsonContent.worker_nodes.count
+                            //     }
+                            //     } catch (Exception e) {
+                            //         echo "Failed to process JSON file: ${file}"
+                            //         echo "Error: ${e.message}"
+                            //     }
                         // def jsonContent = readJSON file : "${file}"
                             // if (jsonContent.control_plane) {
                             //     controlPlaneCount = jsonContent.control_plane.count
