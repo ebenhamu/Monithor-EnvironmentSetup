@@ -40,7 +40,7 @@ pipeline {
                     def workerNodeCount = 0
 
                     for (file in changedFiles) {
-                        if (file.endsWith('.json')) {
+                        if (file == 'manifest.json') {
                             echo "Processing JSON file: ${file}"                            
                             // try {
                             //     def jsonContent = readJSON file: file
@@ -91,17 +91,7 @@ pipeline {
 
 
 
-        stage('Clone Terraform Repo') {
-            steps {
-                script {
-                    echo "Cloning Terraform repository (branch ${env.TF_BRANCH})..."
-                    sh """
-                        rm -rf ${TF_REPO_DIR}
-                        git clone --branch ${TF_BRANCH} https://${env.GITHUB_CREDENTIALS_USR}:${env.GITHUB_CREDENTIALS_PSW}@github.com/ebenhamu/Monithor-infrastructure.git ${TF_REPO_DIR}
-                    """
-                }
-            }
-        }
+ 
 
 
 
