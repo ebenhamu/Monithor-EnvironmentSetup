@@ -11,20 +11,6 @@ List<String> getChangedFilesList() {
     return changedFiles
 }
 
-@NonCPS
-List<String> getChangedFilesList1() {
-    def changedFiles = []
-    for (changeLogSet in currentBuild.changeSets) {
-        for (entry in changeLogSet.getItems()) { // Iterate through commits
-            for (file in entry.getAffectedFiles()) { // Get affected files
-                def fileName = file.getPath().tokenize('/').last() // Extract file name
-                echo "file ${filename}"
-                changedFiles.add(fileName) // Add only the file name to the list
-            }
-        }
-    }
-    return changedFiles
-}
 
 
 pipeline {
@@ -51,15 +37,18 @@ pipeline {
 
         stage('Extract Node Counts') {
             steps {
-                script {
-                    def changedFiles1 = getChangedFilesList1()
+                script {                    
                     def changedFiles = getChangedFilesList()
                     def controlPlaneCount = 0
                     def workerNodeCount = 0
                     for (file in changedFiles) {
                         echo "file ${file}"                        
                     }
-                    for (file in changedFiles) {                        
+                    
+                    for (file in changedFiles) {         
+                        def fileName = file.getPath().tokenize('/').last() // Extract file name
+                        echo "file ${fileName}" // Correct variable name                        
+               
                         if (file.endsWith('.json')) {
                             echo "Processing JSON file: ${file}"                            
                             // try {
