@@ -68,6 +68,7 @@ pipeline {
                     
                     sh """
                         cd ${TF_REPO_DIR}/tf
+                        export PATH=/var/jenkins_home/jobs/MoniThorDeployment/workspace/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                         terraform init -input=false  # Initialize the Terraform directory
                         terraform plan -out=tfplan   # Generate the plan and output it as tfplan
                         terraform apply -input=false -auto-approve tfplan  # Apply the plan
