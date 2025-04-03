@@ -48,13 +48,14 @@ pipeline {
             steps {
                 script {
                     echo "Installing Terraform version ${TF_VERSION}..."
-                    sh """
-                        curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-                        unzip terraform.zip
-                        sudo mv terraform /usr/local/bin/
-                        rm terraform.zip
-                        terraform -version
-                    """
+                sh """
+                    curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+                    unzip -o terraform.zip
+                    sudo  mv terraform /usr/local/bin/
+                    sudo rm terraform.zip
+                    terraform -version
+                """
+
                 }
             }
         }
