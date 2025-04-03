@@ -40,7 +40,7 @@ pipeline {
                     def workerNodeCount = 0
 
                     for (file in changedFiles) {
-                        if (file == 'manifest.json') {
+                        if (file.getPath().tokenize('/').last() == 'manifest.json') {
                             echo "Processing JSON file: ${file}"                            
                             // try {
                             //     def jsonContent = readJSON file: file
